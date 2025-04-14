@@ -1,36 +1,36 @@
-import React, { useState } from "react";
-import useFetchData from "../customHooks/useFetchData";
+import React, { useState, useCallback } from 'react';
+import useFetchData from '../customHooks/useFetchData';
 
 const Dashboard = () => {
     const [userPage, setUserPage] = useState(1);
     const [projectPage, setProjectPage] = useState(1);
+    const limit = 10;
 
-    const { data: users, loading: usersLoading, error: usersError, totalPages: userTotalPages } = useFetchData(
-        "https://jsonplaceholder.typicode.com/users",
+    const { data: users, totalPages: userTotalPages, isLoading: usersLoading, error: usersError } = useFetchData(
+        'https://jsonplaceholder.typicode.com/users',
         userPage,
-        10
-    );
-    const { data: projects, loading: projectsLoading, error: projectsError, totalPages: projectTotalPages } = useFetchData(
-        "https://jsonplaceholder.typicode.com/posts",
-        projectPage,
-        10
+        limit
     );
 
-    const handleUserPageChange = (page) => setUserPage(page);
-    const handleProjectPageChange = (page) => setProjectPage(page);
+    const { data: projects, totalPages: projectTotalPages, isLoading: projectsLoading, error: projectsError } = useFetchData(
+        'https://jsonplaceholder.typicode.com/posts',
+        projectPage,
+        limit
+    );
+
+    const handleUserPageChange = useCallback((page) => setUserPage(page), []);
+    const handleProjectPageChange = useCallback((page) => setProjectPage(page), []);
+
+    const isLoading = usersLoading || projectsLoading;
 
     return (
         <div>
             <h2>Dashboard</h2>
-
-            {/* Error handling for users */}
-            {usersError && <p style={{ color: "red" }}>Error: {usersError}</p>}
-            {(usersLoading || projectsLoading) && <p>Loading...</p>}
-
+            {isLoading && <p>Loading...</p>}
+            {usersError && <p style={{ color: 'red' }}>Error: {usersError.message}</p>}
+            {projectsError && <p style={{ color: 'red' }}>Error: {projectsError.message}</p>}
             <h3>Users</h3>
-            {usersError ? (
-                <p style={{ color: "red" }}>Error fetching users: {usersError}</p>
-            ) : (
+            {users && (
                 <ul>
                     {users.map((user) => (
                         <li key={user.id}>{user.name}</li>
@@ -38,21 +38,14 @@ const Dashboard = () => {
                 </ul>
             )}
             <div>
-                {[...Array(userTotalPages)].map((_, index) => (
-                    <button
-                        key={index + 1}
-                        onClick={() => handleUserPageChange(index + 1)}
-                        disabled={userPage === index + 1}
-                    >
+                {[...Array(userTotalPages || 0)].map((_, index) => (
+                    <button key={index + 1} onClick={() => handleUserPageChange(index + 1)} disabled={userPage === index + 1}>
                         {index + 1}
                     </button>
                 ))}
             </div>
-
             <h3>Projects</h3>
-            {projectsError ? (
-                <p style={{ color: "red" }}>Error fetching projects: {projectsError}</p>
-            ) : (
+            {projects && (
                 <ul>
                     {projects.map((project) => (
                         <li key={project.id}>{project.title}</li>
@@ -60,12 +53,8 @@ const Dashboard = () => {
                 </ul>
             )}
             <div>
-                {[...Array(projectTotalPages)].map((_, index) => (
-                    <button
-                        key={index + 1}
-                        onClick={() => handleProjectPageChange(index + 1)}
-                        disabled={projectPage === index + 1}
-                    >
+                {[...Array(projectTotalPages || 0)].map((_, index) => (
+                    <button key={index + 1} onClick={() => handleProjectPageChange(index + 1)} disabled={projectPage === index + 1}>
                         {index + 1}
                     </button>
                 ))}

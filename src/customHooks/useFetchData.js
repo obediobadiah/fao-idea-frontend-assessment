@@ -1,41 +1,37 @@
-import { useState, useEffect } from "react";
+import { useQuery } from '@tanstack/react-query';
+
+const fetchData = async (url, page, limit) => {
+    const response = await fetch(`${url}?_page=${page}&_limit=${limit}`);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+};
+
+const fetchTotalCount = async (url) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.length;
+};
 
 const useFetchData = (url, page, limit) => {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null); // Error state
-    const [totalPages, setTotalPages] = useState(0);
+    const { data, isLoading, isError, error } = useQuery({
+        queryKey: ['data', url, page, limit],
+        queryFn: () => fetchData(url, page, limit),
+        keepPreviousData: true,
+    });
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                setError(null);
+    const { data: totalCount } = useQuery({
+        queryKey: ['totalCount', url],
+        queryFn: () => fetchTotalCount(url),
+    });
 
-                const response = await fetch(`${url}?_page=${page}&_limit=${limit}`);
-                if (!response.ok) {
-                    throw new Error(`Error fetching data: ${response.statusText}`); // HTTP error handling
-                }
-                const result = await response.json();
-                setData(result);
+    const totalPages = totalCount ? Math.ceil(totalCount / limit) : 0;
 
-                const totalResponse = await fetch(url);
-                if (!totalResponse.ok) {
-                    throw new Error(`Error fetching total count: ${totalResponse.statusText}`);
-                }
-                const totalData = await totalResponse.json();
-                setTotalPages(Math.ceil(totalData.length / limit)); // Calculate total pages
-            } catch (error) {
-                setError(error.message || "An error occurred while fetching data.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [url, page, limit]);
-
-    return { data, loading, error, totalPages };
+    return { data, isLoading, isError, error, totalPages };
 };
 
 export default useFetchData;
