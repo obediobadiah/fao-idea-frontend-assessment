@@ -31,12 +31,10 @@ const Dashboard = () => {
         return `An unexpected error occurred: ${error.message}`;
     };
 
-    // Memoize the user list
     const userList = useMemo(() => {
         return users ? users.map((user) => <li key={user.id}>{user.name}</li>) : null;
     }, [users]);
 
-    // Memoize the project list
     const projectList = useMemo(() => {
         return projects ? projects.map((project) => <li key={project.id}>{project.title}</li>) : null;
     }, [projects]);
