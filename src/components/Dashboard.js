@@ -3,10 +3,12 @@ import useFetchData from '../customHooks/useFetchData';
 import '../styles/Dashboard.css';
 
 const Dashboard = () => {
+    // State variables to track the current page for users and projects
     const [userPage, setUserPage] = useState(1);
     const [projectPage, setProjectPage] = useState(1);
-    const limit = 10;
+    const limit = 10; // Number of items per page
 
+    // Fetch users and projects data using the custom hook
     const { data: users, totalPages: userTotalPages, isLoading: usersLoading, error: usersError } = useFetchData(
         'https://jsonplaceholder.typicode.com/users',
         userPage,
@@ -19,9 +21,11 @@ const Dashboard = () => {
         limit
     );
 
+    // Handlers for changing pages for users and projects
     const handleUserPageChange = useCallback((page) => setUserPage(page), []);
     const handleProjectPageChange = useCallback((page) => setProjectPage(page), []);
 
+    // Function to get a user-friendly error message based on the error status
     const getErrorMessage = (error) => {
         if (!error) return null;
 
@@ -35,14 +39,17 @@ const Dashboard = () => {
         return `An unexpected error occurred: ${error.message}`;
     };
 
+    // Memoized list of users to avoid unnecessary re-renders
     const userList = useMemo(() => {
         return users ? users.map((user) => <li key={user.id}>{user.name}</li>) : null;
     }, [users]);
 
+    // Memoized list of projects to avoid unnecessary re-renders
     const projectList = useMemo(() => {
         return projects ? projects.map((project) => <li key={project.id}>{project.title}</li>) : null;
     }, [projects]);
 
+    // Memoized pagination buttons for users, depending on the total number of pages and current page
     const userPaginationButtons = useMemo(() => {
         return [...Array(userTotalPages || 0)].map((_, index) => (
             <button key={index + 1} onClick={() => handleUserPageChange(index + 1)} disabled={userPage === index + 1}>
@@ -51,6 +58,7 @@ const Dashboard = () => {
         ));
     }, [userTotalPages, userPage, handleUserPageChange]);
 
+    // Memoized pagination buttons for projects, depending on the total number of pages and current page
     const projectPaginationButtons = useMemo(() => {
         return [...Array(projectTotalPages || 0)].map((_, index) => (
             <button key={index + 1} onClick={() => handleProjectPageChange(index + 1)} disabled={projectPage === index + 1}>
