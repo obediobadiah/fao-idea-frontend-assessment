@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import useFetchData from '../customHooks/useFetchData';
-import './Dashboard.css';
+import '../styles/Dashboard.css';
 
 const Dashboard = () => {
     const [userPage, setUserPage] = useState(1);
