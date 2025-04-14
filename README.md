@@ -42,3 +42,7 @@ This project was manually tested for:
 - Reusable hook
 - Error handling
 - Avoiding unnecessary re-renders
+
+### API Call
+
+In this project I used https://jsonplaceholder.typicode.com for Mock APIs
