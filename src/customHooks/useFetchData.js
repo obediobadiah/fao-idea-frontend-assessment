@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 const fetchData = async (url, page, limit) => {
     const response = await fetch(`${url}?_page=${page}&_limit=${limit}`);
     if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`Error: ${response.status}`);
     }
     return response.json();
 };
@@ -11,7 +11,7 @@ const fetchData = async (url, page, limit) => {
 const fetchTotalCount = async (url) => {
     const response = await fetch(url);
     if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`Error: ${response.status}`);
     }
     const data = await response.json();
     return data.length;

@@ -27,6 +27,10 @@ const Dashboard = () => {
 
         if (error.message.includes('HTTP error')) {
             return `Failed to fetch data. Please check your network connection.`;
+        } else if (error.message.includes('404')) {
+            return `Data not found. Please check the URL or try again later.`;
+        } else if (error.message.includes('500')) {
+            return `Server error. Please try again later.`;
         }
         return `An unexpected error occurred: ${error.message}`;
     };
