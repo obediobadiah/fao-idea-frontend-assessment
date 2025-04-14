@@ -37,6 +37,8 @@ src/
 
 This project was manually tested for:
 - Pagination flow
-- Network failure handling
 - Caching behavior
-- Memoization strategy 
+- Memoization strategy
+- Reusable hook
+- Error handling
+- Avoiding unnecessary re-renders

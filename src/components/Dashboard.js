@@ -23,7 +23,7 @@ const Dashboard = () => {
     const handleProjectPageChange = useCallback((page) => setProjectPage(page), []);
 
     const getErrorMessage = (error) => {
-        if (!error) return null; // No error
+        if (!error) return null;
 
         if (error.message.includes('HTTP error')) {
             return `Failed to fetch data. Please check your network connection.`;
