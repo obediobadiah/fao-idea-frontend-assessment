@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import useFetchData from '../customHooks/useFetchData';
-import './Dashboard.css'; // Import a CSS file for styles
+import './Dashboard.css';
 
 const Dashboard = () => {
     const [userPage, setUserPage] = useState(1);
@@ -22,13 +22,21 @@ const Dashboard = () => {
     const handleUserPageChange = useCallback((page) => setUserPage(page), []);
     const handleProjectPageChange = useCallback((page) => setProjectPage(page), []);
 
+    const getErrorMessage = (error) => {
+        if (!error) return null; // No error
+
+        if (error.message.includes('HTTP error')) {
+            return `Failed to fetch data. Please check your network connection.`;
+        }
+        return `An unexpected error occurred: ${error.message}`;
+    };
+
     return (
         <div className="dashboard">
             <h2>Dashboard</h2>
-            {/* Separate loading indicators for users and projects */}
-            {usersLoading && <p className="loading">Loading Users...</p>}
-            {usersError && <p className="error">Error: {usersError.message}</p>}
-            
+            {usersLoading && <p className="loading" />}
+            {usersError && <p className="error">{getErrorMessage(usersError)}</p>}
+
             <div className="card">
                 <h3>Users</h3>
                 {users && (
@@ -47,9 +55,9 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {projectsLoading && <p className="loading">Loading Projects...</p>}
-            {projectsError && <p className="error">Error: {projectsError.message}</p>}
-            
+            {projectsLoading && <p className="loading" />}
+            {projectsError && <p className="error">{getErrorMessage(projectsError)}</p>}
+
             <div className="card">
                 <h3>Projects</h3>
                 {projects && (
